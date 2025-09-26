@@ -13,7 +13,7 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
 # Listening port used by Spring Boot in container (must be same in docker-compose mapping)
-EXPOSE 8084
+EXPOSE 8081
 
 # Start jar and ensure Spring uses 8084
-CMD ["java", "-jar", "app.jar", "--server.port=8084"]
+CMD ["java", "-jar", "app.jar", "--server.port=8081"]
