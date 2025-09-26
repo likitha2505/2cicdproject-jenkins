@@ -10,7 +10,7 @@ services:
       MYSQL_DATABASE: hotel_db
       MYSQL_ROOT_PASSWORD: root
     ports:
-      - "3308:3308"   # host:container -> map host 3308 to container 3306
+      - "3307:3306"   # host:container -> map host 3308 to container 3306
     volumes:
       - db_data:/var/lib/mysql
     networks:
@@ -36,7 +36,7 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "8084:8084"   # map host 8084 to container 8084
+      - "8081:8081"   # map host 8084 to container 8084
     networks:
       - hotel-net
 
@@ -47,7 +47,7 @@ services:
     container_name: hotel_frontend
     restart: always
     ports:
-      - "5177:81"     # host 5177 -> nginx 80
+      - "5173:81"     # host 5177 -> nginx 80
     depends_on:
       - backend
     networks:
