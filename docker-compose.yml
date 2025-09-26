@@ -9,7 +9,7 @@ services:
       MYSQL_DATABASE: hotel_db
       MYSQL_ROOT_PASSWORD: root
     ports:
-      - "3308:3306"   # changed host port (3308) to avoid clash with local MySQL
+      - "3308:3308"   # changed host port (3308) to avoid clash with local MySQL
     volumes:
       - db_data:/var/lib/mysql
     networks:
@@ -35,7 +35,7 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "8082:8081"   # backend exposed on host:8082
+      - "8084:8084"   # backend exposed on host:8082
 
   frontend:
     build:
@@ -44,7 +44,7 @@ services:
     container_name: hotel_frontend
     restart: always
     ports:
-      - "5174:80"     # frontend served on host:5174
+      - "5177:800"     # frontend served on host:5174
     depends_on:
       - backend
     networks:
