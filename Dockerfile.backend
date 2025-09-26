@@ -1,21 +1,19 @@
-# Stage 1: Build with Maven and Java 21
+# Dockerfile.backend
+# Stage 1: Build with Maven
 FROM maven:3.9.6-eclipse-temurin-21 AS build
-
 WORKDIR /app
-
-# Install git to allow repo cloning
 RUN apt-get update && apt-get install -y git
-
-# Clone your backend repo
+# clone your backend repo (change repo to your actual repo if needed)
 RUN git clone https://github.com/likitha2505/project_backend.git .
+RUN mvn -B clean package -DskipTests
 
-# Build Spring Boot JAR
-RUN mvn clean package -DskipTests
-
-# Stage 2: Run with JRE
+# Stage 2: Run
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
+# Listening port used by Spring Boot in container (must be same in docker-compose mapping)
 EXPOSE 8084
+
+# Start jar and ensure Spring uses 8084
 CMD ["java", "-jar", "app.jar", "--server.port=8084"]
