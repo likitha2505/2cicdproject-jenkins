@@ -1,0 +1,58 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: hotel_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: hotel_db
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3308:3306"   # changed host port (3308) to avoid clash with local MySQL
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - hotel-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: hotel_backend
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/hotel_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SERVER_PORT: 8081
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8082:8081"   # backend exposed on host:8082
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: hotel_frontend
+    restart: always
+    ports:
+      - "5174:80"     # frontend served on host:5174
+    depends_on:
+      - backend
+    networks:
+      - hotel-net
+
+volumes:
+  db_data:
+
+networks:
+  hotel-net:
+    driver: bridge

@@ -1,0 +1,20 @@
+# Step 1: Build stage (Node.js for React/Vite)
+FROM node:18 AS build-stage
+WORKDIR /app
+
+# Install git to allow repo cloning
+RUN apt-get update && apt-get install -y git
+
+# Clone your frontend repo
+RUN git clone https://github.com/likitha2505/project_frontend.git .
+
+RUN npm install
+RUN npm run build
+
+# Step 2: Runtime stage (Nginx to serve static files)
+FROM nginx:alpine
+RUN rm -rf /usr/share/nginx/html/*
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
